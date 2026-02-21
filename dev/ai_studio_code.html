@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Ophthalmology NEET TND 2026</title>
+    <!-- Tailwind CSS for Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Confetti for Submission -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body { background-color: #f3f4f6; color: #1f2937; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .option-btn { transition: all 0.2s ease-in-out; border: 2px solid #e5e7eb; }
+        .option-btn:hover { transform: translateY(-2px); border-color: #93c5fd; }
+        .option-btn.selected { background-color: #eff6ff; border-color: #3b82f6; color: #1e3a8a; font-weight: 600; }
+        .progress-bar { transition: width 0.4s ease; }
+        
+        /* Navigation Grid Buttons */
+        .grid-btn { width: 45px; height: 45px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
+        .grid-btn:hover { opacity: 0.8; }
+        .grid-btn.unanswered { background-color: #e5e7eb; color: #374151; }
+        .grid-btn.answered { background-color: #22c55e; color: white; }
+        .grid-btn.marked { border-color: #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.5); }
+        .grid-btn.active { border-color: #3b82f6; border-width: 3px; }
+
+        .hidden { display: none !important; }
+        
+        /* Result Option Styling */
+        .res-correct { background-color: #dcfce7; border: 2px solid #22c55e; color: #166534; font-weight: bold; }
+        .res-wrong { background-color: #fee2e2; border: 2px solid #ef4444; color: #991b1b; }
+        .res-normal { background-color: #f9fafb; border: 1px solid #e5e7eb; color: #4b5563; }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="bg-blue-700 text-white p-5 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold">Ophthalmology NEET TND 2026</h1>
+            <p class="mt-1 text-blue-200" id="quiz-metadata">Loading test details...</p>
+        </div>
+    </div>
+</header>
+
+<!-- INSTRUCTIONS SECTION -->
+<section id="instructions" class="container mx-auto p-4 mt-8 max-w-4xl">
+    <div class="bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Test Instructions</h2>
+        <ul class="list-disc pl-6 space-y-3 mb-8 text-gray-600 text-lg">
+            <li>This test contains multiple-choice questions from the Ophthalmology module.</li>
+            <li>Each question has 4 options, and only <strong>one</strong> is correct.</li>
+            <li>Click on an option to select your answer.</li>
+            <li>Use the <strong>"Mark for Review"</strong> button if you want to flag a question to look at later.</li>
+            <li>Use the <strong>"Grid"</strong> button to easily jump between questions.</li>
+            <li>The test will auto-submit when the timer reaches zero.</li>
+        </ul>
+        <button id="start-test" class="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 shadow-md">
+            Start Test
+        </button>
+    </div>
+</section>
+
+<!-- QUIZ SECTION -->
+<section id="quiz" class="container mx-auto p-4 mt-6 max-w-4xl hidden">
+    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 relative">
+        
+        <!-- Progress & Timer -->
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6 overflow-hidden">
+            <div id="progress-bar" class="progress-bar bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b">
+            <h2 class="text-xl font-bold text-gray-800" id="question-number">Question 1</h2>
+            <div class="bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-lg mt-3 md:mt-0 flex items-center shadow-sm">
+                ⏱️ <span id="timer" class="ml-2">00:00</span>
+            </div>
+        </div>
+        
+        <!-- Question Content -->
+        <div id="question-content" class="mb-8">
+            <p id="question-text" class="text-lg text-gray-800 font-medium mb-6 leading-relaxed"></p>
+            <div id="question-images" class="mb-6 flex flex-col items-center gap-4"></div>
+            <div id="options" class="space-y-3">
+                <!-- Options injected via JS -->
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-wrap gap-3 justify-between items-center border-t pt-6">
+            <div class="flex gap-2">
+                <button id="prev-btn" class="bg-gray-200 text-gray-700 px-5 py-2.5 rounded-lg font-semibold hover:bg-gray-300">Previous</button>
+                <button id="next-btn" class="bg-blue-600 text-white px-8 py-2.5 rounded-lg font-semibold hover:bg-blue-700 shadow-md">Next</button>
+            </div>
+            <div class="flex gap-2 w-full md:w-auto mt-4 md:mt-0">
+                <button id="mark-btn" class="flex-1 md:flex-none bg-yellow-100 text-yellow-800 border border-yellow-300 px-5 py-2.5 rounded-lg font-semibold hover:bg-yellow-200">Mark for Review</button>
+                <button id="nav-toggle-btn" class="bg-gray-800 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-gray-900">Grid</button>
+                <button id="submit-btn" class="bg-green-500 text-white px-5 py-2.5 rounded-lg font-bold hover:bg-green-600 shadow-md">Submit</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RESULTS SECTION -->
+<section id="results" class="container mx-auto p-4 mt-6 max-w-4xl hidden">
+    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+        <h2 class="text-3xl font-extrabold mb-6 text-gray-800 text-center border-b pb-4">Test Results</h2>
+        
+        <!-- Score Dashboard -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="p-4 bg-green-50 rounded-xl border border-green-100 text-center shadow-sm">
+                <p class="text-sm font-bold text-green-600 uppercase tracking-wide">Correct</p>
+                <p id="res-correct" class="text-3xl font-black text-green-700 mt-1">0</p>
+            </div>
+            <div class="p-4 bg-red-50 rounded-xl border border-red-100 text-center shadow-sm">
+                <p class="text-sm font-bold text-red-600 uppercase tracking-wide">Wrong</p>
+                <p id="res-wrong" class="text-3xl font-black text-red-700 mt-1">0</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center shadow-sm">
+                <p class="text-sm font-bold text-gray-500 uppercase tracking-wide">Unanswered</p>
+                <p id="res-unanswered" class="text-3xl font-black text-gray-700 mt-1">0</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded-xl border border-blue-200 text-center shadow-sm">
+                <p class="text-sm font-bold text-blue-600 uppercase tracking-wide">Total Score</p>
+                <p id="res-score" class="text-3xl font-black text-blue-700 mt-1">0</p>
+            </div>
+        </div>
+
+        <!-- Detailed Explanations -->
+        <div id="results-content" class="space-y-8">
+            <!-- Results injected via JS -->
+        </div>
+    </div>
+</section>
+
+<!-- NAVIGATION PANEL (SLIDE OUT) -->
+<div id="nav-panel" class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl p-6 hidden overflow-y-auto z-50 border-l">
+    <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <h3 class="font-extrabold text-xl text-gray-800">Jump to Question</h3>
+        <button id="close-nav-btn" class="text-gray-500 hover:text-red-500 font-bold text-xl">&times;</button>
+    </div>
+    
+    <div class="flex items-center gap-2 mb-4 text-xs font-bold text-gray-500">
+        <div class="w-3 h-3 bg-green-500 rounded-sm"></div> Answered
+        <div class="w-3 h-3 bg-gray-200 border border-gray-300 rounded-sm ml-2"></div> Unanswered
+    </div>
+    <div class="flex items-center gap-2 mb-6 text-xs font-bold text-gray-500">
+        <div class="w-3 h-3 border-2 border-yellow-500 rounded-sm"></div> Marked for Review
+    </div>
+
+    <div id="nav-grid" class="grid grid-cols-4 gap-3">
+        <!-- Grid buttons injected via JS -->
+    </div>
+</div>
+
+<script>
+/* ==========================================
+   QUESTION DATA (Properly Formatted JSON)
+   ========================================== */
+const questions = [
+  {
+    text: "Which of these is not a part of anterior segment of eyeball?",
+    options: [
+      { label: "A", text: "Cornea", correct: false },
+      { label: "B", text: "Posterior chamber", correct: false },
+      { label: "C", text: "Hyaloid vessel", correct: true },
+      { label: "D", text: "Zonules", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Cloquet canal contains hyaloid vessel (primary vitreous) and is in posterior segment"
+  },
+  {
+    text: "A child was born at 34 weeks of gestation. Ophthalmologist review was sort to look for any eye abnormalities. There was a white reflex in one eye. On further evaluation, the doctor observed finding as shown in figure. This could be due to abnormality in which embryonic structure?",
+    options: [
+      { label: "A", text: "Mesoderm", correct: true },
+      { label: "B", text: "Neural crest", correct: false },
+      { label: "C", text: "Surface ectoderm", correct: false },
+      { label: "D", text: "Neuro-ectoderm", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) The given picture shows ultrasound doppler suggestive of persistent hyperplastic hyaloid vessel which is remnant of hyaloid vessel, derivative of mesoderm"
+  },
+  {
+    text: "Which structure lies in the intraconal space?",
+    options: [
+      { label: "A", text: "Lacrimal gland", correct: false },
+      { label: "B", text: "Optic nerve", correct: true },
+      { label: "C", text: "Levator palpebrae", correct: false },
+      { label: "D", text: "Orbicularis oculi", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Intraconal = within muscle cone Contents:Optic nerveOphthalmic artery CN III, VI, nasociliary nerve"
+  },
+  {
+    text: "Parasympathetic fibers for pupillary constriction originate from:",
+    options: [
+      { label: "A", text: "Edinger–Westphal nucleus", correct: true },
+      { label: "B", text: "Superior colliculus", correct: false },
+      { label: "C", text: "Lateral geniculate body", correct: false },
+      { label: "D", text: "Red nucleus", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) The afferent of light reflex (parasympathetic): ipsilateral optic nerve Efferent: Bilateral 3rd nerve Pathway:Edinger–Westphal nucleusCN III--Ciliary ganglion to Short ciliary nerves → sphincter pupillae"
+  },
+  {
+    text: "In a complete lesion of the right optic nerve, shining light in the right eye will produce:",
+    options: [
+      { label: "A", text: "No constriction in either eye", correct: true },
+      { label: "B", text: "Right pupil constriction only", correct: false },
+      { label: "C", text: "Left pupil constriction only", correct: false },
+      { label: "D", text: "Both pupils constrict", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) Optic nerve is afferent Oculomotor nerve is efferent of pupillary pathway In 2nd nerve transection - On shining a torch light in fellow eye, there will be constriction seen in both eyes, but when light was shown to affected eye, neither of pupil will constrict."
+  },
+  {
+    text: "A 25 year old female was diagnosed to have left eye optic neuritis due to demyelination. MRI was normal. What will be the pupil reaction when torch light will be swung in left eye during swinging flash light examination?",
+    options: [
+      { label: "A", text: "No reaction in both pupils", correct: false },
+      { label: "B", text: "Dilatation of both pupils", correct: true },
+      { label: "C", text: "No reaction in left, constriction in right", correct: false },
+      { label: "D", text: "No reaction in right, constriction in left", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Marcus Gun n pupil is seen in optic nerve compression or optic neuritis. Its also known as relative afferent pupillary defect and tested by swinging flash light examination. There is dilatation in both pupils when light is swung to affected side"
+  },
+  {
+    text: "During pupil examination of a patient, anisocoria was noted which was more in bright light. Slit lamp examination revealed normal iris pattern and pupil shape. There was no pupil constriction in left eye with diluted pilocarpine. Even there was no constriction was noted after instillation of 1% pilocarpine. What’s the possible diagnosis",
+    options: [
+      { label: "A", text: "Adie pupil", correct: false },
+      { label: "B", text: "3rd nerve palsy", correct: false },
+      { label: "C", text: "Damage to iris sphincter", correct: false },
+      { label: "D", text: "Atropine use", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Adie pupil – constricts with diluted pilocarpine 3rd nerve palsy- constricts with 1% pilocarpine Damage to iris sphincter –examined on slit lamp Atropine blocks sphincter receptos on which pilocarpine works"
+  },
+  {
+    text: "The afferent pathway of the reflex needed while doing this testing passes through:",
+    options: [
+      { label: "A", text: "Pretectal nucleus", correct: false },
+      { label: "B", text: "Oculomotor nerve", correct: false },
+      { label: "C", text: "Visual cortex", correct: true },
+      { label: "D", text: "Edinger–Westphal nucleus", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) The accommodation reflex (or accommodation-convergence reflex) is a reflex action of the eye, in response to focusing on a near object, comprising coordinated changes convergence, lens shape (accommodation) and pupil size. Near reflex is a cortical reflexPathway:Retina → Optic nerve → LGB → Visual cortex (occipital lobe)This is the key difference from light reflex. The ciliary muscle constricts, zonules relax making the lens thicker antero-posteriorly, shortening its equatorial length. The anterior curvature of lens increases and anterior chamber shallows."
+  },
+  {
+    text: "A child with visual acuity of 6/6 in right eye and 6/60 in other eye with best possible correction. Both eyes had refractive error of +4D. No structural abnormality was there in eyes other than shown in pic. Which chart shown gives accurate visual acuity here?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: true },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Patient has anisometropic amblyopia left eye A- Snellen chart B- Pielli Robson chart (for contrast sensitivity) C- ETDRS chart (better vision in amblyopia due to crowding phenomeon) D- Landolts C/E chaert"
+  },
+  {
+    text: "A patient reads 6/18 with right eye. This implies:",
+    options: [
+      { label: "A", text: "Patient can read at 6 m what a normal person reads at 18 m", correct: true },
+      { label: "B", text: "Patient can read at 18 m what a normal person reads at 6 m", correct: false },
+      { label: "C", text: "Minimal angle of resolution is 30 minutes of arc", correct: false },
+      { label: "D", text: "The total minimal angle of resolution subtends is 3 minutes of arc", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) For 6/18MAR will be 3 min Total angle subtended will be 15 min"
+  },
+  {
+    text: "Which of the following statements is incorrect regarding the device shown?",
+    options: [
+      { label: "A", text: "The image seen by observer is real and inverted", correct: false },
+      { label: "B", text: "Condenser lens is needed", correct: false },
+      { label: "C", text: "It is used to view optic disc changes in glaucoma", correct: true },
+      { label: "D", text: "The magnification provided depends on the refractive error of patient", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Indirect ophthalmoscope Magnification= power of eye of patient/power of lens used For optic disc evaluation: slit lamp + lenses> direct ophthalmoscope"
+  },
+  {
+    text: "A young patient with frequent change of glasses with this sign. What is the likely refractive error in the patient?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Munson sign in KERATOCONUS A- emmetropia B- simple myopia C- simple hypermetropia D- astigmatism (compound myopic) Keratoconus patients have myopic astigmatism"
+  },
+  {
+    text: "What is false for the given pic",
+    options: [
+      { label: "A", text: "The interval between the two focal points B and F is called Sturm’s conoid", correct: false },
+      { label: "B", text: "If retina is at point A, its compound hypermetropic astigmatism", correct: false },
+      { label: "C", text: "Circle of least confusion should be when retina is at point D", correct: false },
+      { label: "D", text: "It against the rule astigmatism depicted here", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Space between them = Sturm’s conoid Circle of least confusion lies between them Both rays are focussed in front point A and G Gat different points Vertical axis is focussed before horizontal, stecper axis is vertical (with the rule)"
+  },
+  {
+    text: "A patient has a far point of 50 cm in front of eye. What is the refractive error?",
+    options: [
+      { label: "A", text: "−1 D", correct: false },
+      { label: "B", text: "−2 D", correct: true },
+      { label: "C", text: "+1 D", correct: false },
+      { label: "D", text: "+2 D", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Far point (myopia) = 0.5 m Refractive error = −1 / far point (in meters)= −1 / 0.5 = −2 D"
+  },
+  {
+    text: "-4.00DS +1.00DC ×90 degrees. What type of refractive error is this?",
+    options: [
+      { label: "A", text: "Mixed astigmatism with the rule", correct: false },
+      { label: "B", text: "Simple myopic astigmatism against the rule", correct: false },
+      { label: "C", text: "Compound myopic astigmatism against the rule", correct: false },
+      { label: "D", text: "Compound myopic astigmatism with the rule", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) -4.00DS +1.00DC ×90 degrees, means -4d in both axis and +1d in horizontal axis (cylinder acts at 90 degrees to its axis). It becomes -4 d in vertical axis and -3 d in horizontal axis. Its compound myopic astigmatism with the rule as vertical axis is steeper."
+  },
+  {
+    text: "Which of these is of no use in subjective refraction?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) A-Pinhole B-Jackson cross cylinder C-Duochrome test D-Maddox rod Pinhole and duochrome testing are used for refinement of spherical power Jackson cross cylinder testing is used for refinement of cylinder power and axis The 2 axes of Jackson cross cylinder are of same power and opposite signs like +0.5D and -0.5D (-0.5DS with +1DC at 90 degrees), +1D and -1D (-1DS with +2DC at 90 degrees) Maddox rod is used for binocularity (see Squint chapter)"
+  },
+  {
+    text: "Which of the following patient will have stimulus deprivation amblyopia?",
+    options: [
+      { label: "A", text: "A", correct: true },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) A- zonular congenital cataract (Mx asap to prevent amblyopia) B- nuclear sclerosis C- Christmas tree cataract D- Cuneiform shape senile cataract"
+  },
+  {
+    text: "A child presents with bilateral cataract and failure to thrive. Most likely cause among options is?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: true },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) A- Rosette cataract B- oil droplet cataract (seen in galactosemia in the Q) C- lens coloboma D- lens subluxation Galactose → galactitol accumulation in lensCauses oil-droplet cataractAssociated with systemic illness"
+  },
+  {
+    text: "A patient was seen after cataract surgery and following was observed on slit lamp. What could be diagnosis",
+    options: [
+      { label: "A", text: "Posterior capsule opacification", correct: false },
+      { label: "B", text: "Aphakia", correct: false },
+      { label: "C", text: "IOL subluxation", correct: true },
+      { label: "D", text: "Lens opacification", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) The image shows IOL displacement The edge of IOL can be seen Here its inferiorly subluxated"
+  },
+  {
+    text: "The given step of cataract surgery is important because it:",
+    options: [
+      { label: "A", text: "Prevents posterior capsular rupture", correct: false },
+      { label: "B", text: "Allows controlled nucleus delivery", correct: true },
+      { label: "C", text: "Prevents posterior capsular opacification", correct: false },
+      { label: "D", text: "Reduces endothelial damage", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Continuous curvilinear capsulorhexis (CCC) Provides strong, elastic anterior capsular rim Essential for safe nucleus manipulation and IOL placement"
+  },
+  {
+    text: "On the first post-op day after complicated cataract surgery, the doctor noticed the following findings. The visual acuity was 1/60. There were restricted eye movements and severe pain. The intraocular pressure was high with cornea and scleral abscess. Ultrasound B scan revealed vitreous exudates. What should be management now in order to save the eye?",
+    options: [
+      { label: "A", text: "Systemic antimibrobials", correct: true },
+      { label: "B", text: "Eviseration", correct: false },
+      { label: "C", text: "Enucleation", correct: false },
+      { label: "D", text: "Intravitreal tap and antimicrobials", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) Post op pandophthalmitis (infection of all layers of eyeball) Eviseration is done if painful blind eye"
+  },
+  {
+    text: "A patient with cataract complains of severe glare while driving at night and marked difficulty in bright sunlight. Vision worsens more for near work than distance. Which cataract is most likely?",
+    options: [
+      { label: "A", text: "Nuclear", correct: false },
+      { label: "B", text: "Cortical", correct: false },
+      { label: "C", text: "Posterior subcapsular", correct: true },
+      { label: "D", text: "Hypermature", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) PSC lies in visual axis Causes:Glare-Worse in bright light Near vision affected early"
+  },
+  {
+    text: "A patient presents with acute pain, redness, shallow anterior chamber, raised IOP, and an intumescent cataract.",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) A- Immature senile cataract B- Mature senile cataract C- Morgagnian cataract D- Intumuscent cataract (swollen lens can push iris forward)"
+  },
+  {
+    text: "Which of the following is false for a 55 year old pseudophakic person with Fuch corneal endothelial dystrophy?",
+    options: [
+      { label: "A", text: "The amplitude of accommodation is lost", correct: false },
+      { label: "B", text: "Specular microscopy pre and post surgery is important investigation", correct: false },
+      { label: "C", text: "Topical hypertonic saline eye drops or ointment is given for post op corneal edema", correct: false },
+      { label: "D", text: "For evaluation of refractive power for far after cataract surgery, tropicamide is used as cycloplegia", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Specular microscopy reveals endothelium of cornea As accommodation is lost, cycloplegia is not required"
+  },
+  {
+    text: "Cataract surgery was planned in a diabetic patient of Mature senile cataract. An intern was asked to do some necessary investigations. Which investigation is not useful?",
+    options: [
+      { label: "A", text: "Keratometry", correct: false },
+      { label: "B", text: "Ultrasound A scan", correct: false },
+      { label: "C", text: "Biometry", correct: false },
+      { label: "D", text: "Fundoscopy", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) As there is no view of posterior segment, fundoscopy cannot be done USG B scan is needed Keratometry and Axial length for calculating IOL power"
+  },
+  {
+    text: "The abnormality in given visual field is related to?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: true },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) A- papillomacular bundle fibres B- radiating fibres C- optic disc D,E- arcuate fibres Enlargement of blind spot is shown in visual field"
+  },
+  {
+    text: "A 45-year-old alcoholic presents with visual difficulty. Perimetry shows such defects. Fundoscopy reveals temporal pallor of optic discs. Most likely diagnosis?",
+    options: [
+      { label: "A", text: "Glaucoma", correct: false },
+      { label: "B", text: "Tunnel vision", correct: false },
+      { label: "C", text: "Pituitary adenoma", correct: false },
+      { label: "D", text: "Toxic optic neuropathy", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Right field shows centro-caecal scotoma Left shows central scotoma Alcohol + tobacco → toxic optic neuropathy Central scotoma + temporal pallor = classic"
+  },
+  {
+    text: "A visual field chart shows: Left eye: loss of temporal field Right eye: loss of temporal field Central vision preserved Lesion location?",
+    options: [
+      { label: "A", text: "Left optic nerve", correct: false },
+      { label: "B", text: "Right optic tract", correct: false },
+      { label: "C", text: "Optic chiasm", correct: true },
+      { label: "D", text: "Occipital cortex", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Temporal fields in both eyes → bitemporal hemianopia"
+  },
+  {
+    text: "A 58-year-old man presents with difficulty in looking right side from both eyes. On testing shown here, he has right homonymous hemianopia with macular sparing. He can still read small print. Motor and sensory exams are normal. Which artery is MOST likely involved?",
+    options: [
+      { label: "A", text: "Right middle cerebral artery", correct: false },
+      { label: "B", text: "Left middle cerebral artery", correct: false },
+      { label: "C", text: "Left posterior cerebral artery", correct: true },
+      { label: "D", text: "Right posterior cerebral artery", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Confrontation is bedside visual field testing Right homonymous hemianopia → left hemisphere lesionMacular sparing → occipital cortexOccipital cortex blood supply → PCA"
+  },
+  {
+    text: "A 55-year-old man with no visual complaints is found to have IOP of 26 mmHg, cup-disc ratio of 0.8, and open angles on gonioscopy. Which cells are primarily damaged here?",
+    options: [
+      { label: "A", text: "A", correct: true },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) Diagnosis is Primary open angle glaucoma A- Ganglion cell (axons forms the optic nerve, primarily damaged in glaucoma) B- Muller cell (microglia) C- Inner nuclear layer (bipolar) D- Retinal pigment epithelium"
+  },
+  {
+    text: "Which of the following is not a vascular sign in glaucoma?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: true },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) a- Bayonetting sign b- Baring of circumlinear vessels c- Increase in cup:disc ratio d- Nasalization of vessels Increase cup disc ratio is not a vascular sign"
+  },
+  {
+    text: "Which of the following is 1st defect in glaucoma?",
+    options: [
+      { label: "A", text: "A", correct: true },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) A- paracentral scotoma B- Siedel C- arcuate D- double arcuate"
+  },
+  {
+    text: "Which finding differentiates glaucomatous optic atrophy from optic neuritis?",
+    options: [
+      { label: "A", text: "Visual field loss", correct: false },
+      { label: "B", text: "Loss of color vision", correct: false },
+      { label: "C", text: "Cupping of disc", correct: true },
+      { label: "D", text: "Reduced visual acuity", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Increased cup: disc ratio is seen in glaucoma, not in optic neuritis"
+  },
+  {
+    text: "An intern on his 1st day of Ophthalmology posting saw a resident measuring intraocular pressure of a patient of glaucoma. The intern checked notes of the resident and saw that he mentioned corneal opacity. He then observed that the resident measured IOP. Which of the following tonometers was being used by the resident?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) A- Goldmann tonometer B- Schiotz C- Rebound tonometer D- Tonopen (preferred in patients with irregular corneal surface/corneal opacity)"
+  },
+  {
+    text: "A 50-year-old man has progressive peripheral vision loss. Fundus: CDR 0.7, neuroretinal rim thinning inferiorly. Visual field: nasal step superiorly. IOP = 16 mmHg. History: migraine, Raynaud’s phenomenon. Most likely diagnosis?",
+    options: [
+      { label: "A", text: "Primary open angle glaucoma, starts topical meds", correct: false },
+      { label: "B", text: "Ocular hypertension, observe", correct: false },
+      { label: "C", text: "Normal tension glaucoma, starts topical meds", correct: true },
+      { label: "D", text: "Normal tension glaucoma, observe", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Normal pressure with optic disc or field changes is suggestive of Normal tension glaucoma"
+  },
+  {
+    text: "A patient presents with sudden onset severe eye pain, headache, blurred vision, and coloured haloes. Examination reveals a small irregular pupil, steamy cornea and 60 mm Hg. What is the most likely diagnosis?",
+    options: [
+      { label: "A", text: "Secondary angle closure due to anterior uveitis", correct: true },
+      { label: "B", text: "Neovascular glaucoma", correct: false },
+      { label: "C", text: "Phacomorphic glaucoma", correct: false },
+      { label: "D", text: "Acute primary angle closure", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) Pupil is small irregular in anterior uveitis When pupil is mid dilated such as in dim light, prone position or by cycloplegics (mydriatics), there is increased apposition surface contact between iris and lens, causing relative pupillary block with aqueous in posterior chamber pushing the iris forward and blocks the angle of the anterior chamber, leading to an attack of acute angle closure. Pupil is dilated in acute angle closure"
+  },
+  {
+    text: "This was seen in a patient on slit lamp. Which of the following drugs can cause this?",
+    options: [
+      { label: "A", text: "Atropine", correct: true },
+      { label: "B", text: "Prostaglandins", correct: false },
+      { label: "C", text: "Phenylephrine", correct: false },
+      { label: "D", text: "Pilocarpine", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) Festooned pupil in anterior uveitis is seen after dilatation with cycloplegics Strongest is atropine"
+  },
+  {
+    text: "A 65-year-old man presents with gradually decreasing peripheral vision. On slit-lamp: the given image was seen. IOP = 28 mmHg. Gonioscopy: open angles. Visual field: arcuate defect. Most likely mechanism of raised IOP?",
+    options: [
+      { label: "A", text: "Pupillary block", correct: false },
+      { label: "B", text: "Reduced trabecular outflow due to exfoliative material", correct: true },
+      { label: "C", text: "Disruption of trabecular meshwork due to trauma", correct: false },
+      { label: "D", text: "Decreased aqueous flow due to primary resistance at trabecular meshwork", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Pseudoexfoliation (most common cause of secondary glaucoma) shown in picture"
+  },
+  {
+    text: "Krukenberg spindles can be seen in which of the following?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: true },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) A- Malignant glaucoma B- Pigmentory glaucoma (Reverse): has Krukenberg spindles C- Koeppe nodules in uveitis D- Pseudoexfoliation (most common cause of secondary glaucoma)"
+  },
+  {
+    text: "In which of the following, the presentation is absolutely different from others?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) A- Headlight in fog appearance in Toxoplasmosis B- Persistent hyperplastic primary vitreous C- Retinoblastoma D- Blue dot cataract (asymptomatic) Rest all others can present as leukocoria"
+  },
+  {
+    text: "A patient presents with mutton-fat keratic precipitates, hypopyon, iris nodules, and chronic granulomatous uveitis. Most likely cause?",
+    options: [
+      { label: "A", text: "HLA-B27 disease", correct: false },
+      { label: "B", text: "Sarcoidosis", correct: true },
+      { label: "C", text: "Viral uveitis", correct: false },
+      { label: "D", text: "Rheumatoid arthritis", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Mutton fat KPs seen in granulomatous inflammation Rhematoid arthritis has scleritis/episcleritis"
+  },
+  {
+    text: "What will be the management if there is trauma in 1 eye with vision of 1/60 and other eye has vision of 2/60 with granulomatous panuveitis ?",
+    options: [
+      { label: "A", text: "Intravenous steroids", correct: true },
+      { label: "B", text: "Intravenous antimicrobials", correct: false },
+      { label: "C", text: "Enucleate the injured eye", correct: false },
+      { label: "D", text: "Enucleate the other eye", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) Sympathetic ophthalmia bilateral diffuse granulomatous intraocular inflammation that occurs after surgery or penetrating trauma to one eye with a subsequent autoimmune response to this tissue. The injured or operated eye is the exciting eye and the contralateral eye is the sympathizing eye. Rx is by intravenous steroids"
+  },
+  {
+    text: "A 55-year-old patient with long-standing diabetes complains of painful, red eye with gradually decreasing vision. Slit-lamp shows following image, IOP = 42 mmHg. Which is false here?",
+    options: [
+      { label: "A", text: "Its seen in advanced diabetic retinopathy stage", correct: false },
+      { label: "B", text: "Pupil block mechanism causing high IOP", correct: true },
+      { label: "C", text: "This sign suggests extensive retinal ischemia", correct: false },
+      { label: "D", text: "IOP control with Pan retinal photocoagulation to be done here", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Rubeosis iridis in Proliferative diabetic retinopathy Neovascular membrane obstructing trabecular meshwork"
+  },
+  {
+    text: "What is not included in a Proliferative diabetic retinopathy?",
+    options: [
+      { label: "A", text: "Retinal detachment", correct: false },
+      { label: "B", text: "100 day glaucoma", correct: true },
+      { label: "C", text: "Rubeosis iridis", correct: false },
+      { label: "D", text: "Vitreous hemorrage", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) 100 day glaucoma seen in CRVO CME can be seen in any stage of diabetic retinopathy"
+  },
+  {
+    text: "On normal angiography, which is not true",
+    options: [
+      { label: "A", text: "The dye is injected in antecubital vein in forearm", correct: false },
+      { label: "B", text: "Choroidal vessels are filled last in angiography", correct: true },
+      { label: "C", text: "Arm-retinal time is 11s", correct: false },
+      { label: "D", text: "Fovea is hypofluoroscence", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Fovea is dark on angiography because of -Absence of blood vessels in the Foveal avascular zone -Blockage of background choroidal fluorescence due to the high density of xanthophyll at the fovea. -Blockage of background choroidal fluorescence by the RPE cells at the fovea, which contain more melanin than elsewhere in the retina Choroidal vessels are filled earlier than retinal vessels in angiography"
+  },
+  {
+    text: "With which of the following angiography images, the given Optical coherence tomography images matches?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: true },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) A- cystoid macular edema (flower petal appearance) B- ink blot in central serous retinopathy C- microaneurysms in early stages of diabetic retinopathy D- New vessels also seen in PDR stage"
+  },
+  {
+    text: "A patient develops CME following cataract surgery. What is the most likely pathophysiological mechanism?",
+    options: [
+      { label: "A", text: "Increased choroidal permeability", correct: false },
+      { label: "B", text: "Breakdown of blood–retinal barrier", correct: true },
+      { label: "C", text: "Vitreomacular traction", correct: false },
+      { label: "D", text: "Retinal ischemia", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Cystoid macular edema due to inner blood retinal barrier Flower petal appearance is due to outer plexiform layer Seen in diabetic retinopathy Retinal vein occlusion Post cataract surgery Uveitis (intermediate and posterior) Drugs – Niacin. Adrenaline, pilocarpine, prostaglandins"
+  },
+  {
+    text: "Which of the following is wrong regarding given picture",
+    options: [
+      { label: "A", text: "Blue arrow indicates deposits under retina", correct: false },
+      { label: "B", text: "Red arrow indicates retinal new vessels", correct: true },
+      { label: "C", text: "Angiography reveals hyperfluoroscence due to leakage of dye", correct: false },
+      { label: "D", text: "Photodyanamic therapy has additive effect when anti-VEGF is given", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Choroidal neovascularization describes the growth of new blood vessels that originate from the choroid through a break in the Bruch membrane into the sub–retinal pigment epithelium (sub-RPE) or subretinal space. As new vessels have propensity to leak dye, they are hyperfluoroscence"
+  },
+  {
+    text: "Which corneal layer is has embryologic origin different from others?",
+    options: [
+      { label: "A", text: "A", correct: true },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) A: Epithelium, derived from surface ectoderm B: Bowman membrane C: Descemet’s membrane D: Endothelium All other corneal layers are derived from neural crest"
+  },
+  {
+    text: "A patient with corneal ulcer has copious purulent discharge, rapid stromal necrosis, and greenish infiltrate. He is a contact-lens wearer. Most likely organism?",
+    options: [
+      { label: "A", text: "Staphylococcus aureus", correct: false },
+      { label: "B", text: "Streptococcus pneumoniae", correct: false },
+      { label: "C", text: "Pseudomonas aeruginosa", correct: true },
+      { label: "D", text: "Candida albicans", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Rapid Greenish infiltrate Contact lens All goes in favour of Pseudomonas"
+  },
+  {
+    text: "A patient presented with painful blurred vision with photophobia after wearing contact lens. Slit-lamp picture is given. What is the stain used?",
+    options: [
+      { label: "A", text: "Ziehl Neelsen", correct: false },
+      { label: "B", text: "Calcoufor white", correct: true },
+      { label: "C", text: "Gram", correct: false },
+      { label: "D", text: "Gomori Methamine Silver", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Ring infiltrates associate dwith corneal ulcer is most likely Acanthamoeba keratitis Stain used in acridine orange/Calcoufor white Culture is non nutrient E Coli medium"
+  },
+  {
+    text: "Through which of the following corneal opacities, the anterior segment details are visible",
+    options: [
+      { label: "A", text: "A", correct: true },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) a. Nebula b. Macula- details are faintly visible c. Leukoma-details are not visible d. Adherent leukoma-details are not visible"
+  },
+  {
+    text: "A 17-year-old boy presents with progressive blurring of vision in both eyes. He frequently changes spectacles but vision never becomes perfect. On retinoscopy, a scissoring reflex is seen. Slit-lamp shows fine vertical lines in deep stroma. Which investigation is MOST sensitive here?",
+    options: [
+      { label: "A", text: "Slit-lamp examination", correct: false },
+      { label: "B", text: "Retinoscopy", correct: false },
+      { label: "C", text: "Keratometry", correct: false },
+      { label: "D", text: "Corneal topography", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Keratoconus Corneal topography like PENTACAM/ORBSCAN is investigation of choice"
+  },
+  {
+    text: "Which is not seen in a patient of keratoconus",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: true },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) A- scissor reflex on retinoscopy B- Munson sign in keratoconus C-Habb striae in Congenital glaucoma D- INTACS done in keratoconus"
+  },
+  {
+    text: "Which of the following is seen as a complication of corneal ulcer?",
+    options: [
+      { label: "A", text: "A", correct: true },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) A- Anterior staphyloma B- Intercalary staphyloma C- Ciliary staphyloma D- Posterior staphyloma"
+  },
+  {
+    text: "A 10 year old presents with decreased vision. On slit-lamp examination, superotemporal lens dislocation was seen. Posterior staphyloma was seen on Indirect ophthalmoscopy. What is the most likely underlying condition?",
+    options: [
+      { label: "A", text: "Homocystinuria", correct: false },
+      { label: "B", text: "High myopia", correct: false },
+      { label: "C", text: "Ehlers-Danlos syndrome", correct: false },
+      { label: "D", text: "Marfan syndrome", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Pathological myopia is associated with a high myopic of more than 6 D of myopia Superotemporal lens dislocation with myopia goes in favour of Marfans Features include: Lattice is area of retinal thinning Lacquer crack are cracks in Bruch membrane Choroidal new vessels can develop from it Foster Fuch spots: remnant of bleeding Chorioretinal atrophy: tigroid fundus (due to prominent choroid vessels) Posterior staphyloma: Degenerative high axial myopia is a major cause Perpapillary atrophy Tilted disc due to oblique insertion of optic nerve to disc"
+  },
+  {
+    text: "Mitochondria, Endoplasmic reticulum and Golgi apparatus are present in which oh the marked structures?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: true },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Cone cell is shown a- Outer plexiform b- Outer nuclear layer of cone c- Inner segment d- Outer segment"
+  },
+  {
+    text: "After 6 months of uneventful cataract surgery, a patient presented with floaters, followed by curtain falling from above his eyes. Most probable diagnosis?",
+    options: [
+      { label: "A", text: "Posterior vitreous detachment", correct: false },
+      { label: "B", text: "Vitreous hemorrhage", correct: false },
+      { label: "C", text: "Rhegmatogenous retinal detachment", correct: true },
+      { label: "D", text: "Central serous retinopathy", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) The symptoms in a classic case of rhegmatogenous retinal detachment are floaters – flashes – visual field defect followed by vision loss. Liquified vitreous can escape from the retinal break/hole into subretinal space and push the neurosensory retina (concave configuration)"
+  },
+  {
+    text: "A patient with sudden painless loss of vision presents within 2 hours. Fundus finding is shown. The pathophysiology in this condition?",
+    options: [
+      { label: "A", text: "Hyperemia of macula", correct: false },
+      { label: "B", text: "Retinal hemorrhage", correct: false },
+      { label: "C", text: "Transparency of fovea due to absence of inner retinal layers", correct: true },
+      { label: "D", text: "Increased choroidal blood flow", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Cherry red spot Transparency of fovea due to absence of inner retinal layers Cherry red spot has pathology in ganglion layer of retina Different Diagnosis of CHERRY-RED SPOT: 1. CRAO 2. Tay sachs Ds (no organomegaly) 3. Niemann-pick (with organomegaly) 4. Gangliosidosis – type 1 and 2 5. Sialidosis: (cherry-red spot myoclonus syndrome) 6. Sandoffs 7. Berlins edema"
+  },
+  {
+    text: "The earliest and most sensitive investigation to confirm diagnosis is:",
+    options: [
+      { label: "A", text: "Electrooculography", correct: false },
+      { label: "B", text: "Optical coherence tomography", correct: false },
+      { label: "C", text: "Electroretinography", correct: true },
+      { label: "D", text: "Visual evoked potential", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) ERG shows reduced/absent rod response early, even before fundus changes. Bony spicules are characteristic in peripheral retina Classical TRIAD of: • Bone-spicule pigmentation • Arteriolar attenuation • Waxy optic disc pallor Tubular fields is late finding in RP a wave of ERG is represented by rods and cones, which are early affected in RP"
+  },
+  {
+    text: "A 45-year-old patient with long-standing Thyroid eye disease presents after 2 years with stable proptosis and persistent diplopia, but no redness or pain. There was difficulty in looking upward and diplopia This patient is most likely in which phase?",
+    options: [
+      { label: "A", text: "Acute inflammatory phase", correct: false },
+      { label: "B", text: "Active congestive phase", correct: false },
+      { label: "C", text: "Inactive fibrotic phase", correct: true },
+      { label: "D", text: "Thyrotoxic crisis", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Stable proptosis without pain/redness rules out active stage"
+  },
+  {
+    text: "A 28-year-old woman presents with a painless, slowly enlarging swelling on the upper eyelid for the past 2 months. There is no redness or tenderness. On everting the lid, a firm, localized nodule is seen on the tarsal conjunctiva. Which structure is likely involved?",
+    options: [
+      { label: "A", text: "1", correct: false },
+      { label: "B", text: "2", correct: false },
+      { label: "C", text: "3", correct: true },
+      { label: "D", text: "5", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Muller muscle is involved in Horner syndrome 1- orbicularis oculi 2- tarsus 3- meibomian gland 4- levator muscle 5- muller muscle"
+  },
+  {
+    text: "A patient presents with a painful eyelid swelling with pus pointing at the base of the eyelash. On examination, there were restricted eye movements. Vision was 6/6. what is likely diagnosis?",
+    options: [
+      { label: "A", text: "Extrenal hordeolum", correct: false },
+      { label: "B", text: "Preseptal cellulitis", correct: false },
+      { label: "C", text: "Orbital celulitis", correct: true },
+      { label: "D", text: "Cavernous sinus thrombosis", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Restricted eye movements suggest involvement of orbita It rules out preseptal cellulitis (external hordeolum) No extra information regarding cavernous sinus involvement"
+  },
+  {
+    text: "A patient with miosis, ptosis and absence of anhidrosis presented to the clinic. Which structure is most likely compressed in such a scenario?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) A- central lesion B,c- pre ganglion lesion C- post ganglion lesion Anhydrosis is not a feature of post ganglion Horner syndrome Absence of anhydrosis suggests post ganglion lesion"
+  },
+  {
+    text: "A 10-year-old boy presents in spring with intense itching, photophobia, and thick ropy discharge from both eyes. Which among these is not to be seen in his eyes?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Vernal keratoconjunctivitis A- Horner Tranta dots B- papillae in upper palpebral conjunctiva C- Pseuogerontoxon D- Herbert pits in Trachoma"
+  },
+  {
+    text: "A laborer was working outdoors since many years. He has complains of progressive increasing growth in eyes which was associated with gradual decrease in vision. On examination, a mass was seen growing on to the cornea. What could be the diagnosis among these?",
+    options: [
+      { label: "A", text: "A", correct: true },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) A- pterygium B- pingencula C- Bitot spot D- Phylectenular conjunctivitis Pterygium is fibrovascular growth of conjunctiva over cornea. It has a head, neck and body. The head encroaches onto the cornea, invading the Bowman layer. Iron deposition (Stocker line) may be seen in the corneal epithelium anterior to the head of the pterygium. Pterygium induces corneal flattening in its axis (horizontal). Thus, it makes vertical cornea steeper (with the rule astigmatism). Later the growth can cause irregular astigmatism due to irregular corneal surface. Pterygium is progressive when it has vascular growth. Later it becomes pale and atrophic (regressive)"
+  },
+  {
+    text: "True for muscles marked are all except:",
+    options: [
+      { label: "A", text: "Muscle ‘b’ only works in horizontal axis", correct: false },
+      { label: "B", text: "Origin of ‘c’ muscle is from the apex of the orbit", correct: false },
+      { label: "C", text: "Maximum elevation of ‘a’ muscle is in 23 degree abducted position", correct: false },
+      { label: "D", text: "Maximum depression of ‘c’ muscle is in 51 degree abducted position", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) A- SR B- LR C- SO When the globe is abducted to 23°, eyeball is aligned to SR and IR. In this position SR has no subsidiary actions and can act only as a elevator. When the globe is adducted to 51°, eyeball is aligned to SO and IO. In this position SO has no subsidiary actions and can act only as a depressor."
+  },
+  {
+    text: "Which is true for the action shown in the figure?",
+    options: [
+      { label: "A", text: "It is a type of version", correct: false },
+      { label: "B", text: "Herring law applies here", correct: false },
+      { label: "C", text: "Dextro-elevation is shown here", correct: false },
+      { label: "D", text: "Right inferior oblique and left superior rectus are working here", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) Dextro-elevation Yoke muscles are right SR and left IO"
+  },
+  {
+    text: "During Hirschberg testing, the corneal light reflex is displaced 2 mm nasally in the left eye compared to the right eye. The approximate angle of deviation is:",
+    options: [
+      { label: "A", text: "10 degrees", correct: false },
+      { label: "B", text: "15 degrees", correct: true },
+      { label: "C", text: "30 degrees", correct: false },
+      { label: "D", text: "45 degrees", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) 1 mm of decentration of the corneal light reflex from the center of the pupil typically corresponds to approximately 7° to 8° of deviation, which is roughly equivalent to 15 prism diopters (PD)"
+  },
+  {
+    text: "Nerve palsy is not seen in which of these?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: false },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) A- Left 6th nerve palsy B- Left 4th nerve palsy C- Left3rd nerve palsy D- Pseudoesotropia (epicanthus/telecanthus)"
+  },
+  {
+    text: "A 10-year-old child presents with sudden onset inward deviation of one eye following fever. He complains of horizontal diplopia that increases on looking toward the affected side. Diagnosis?",
+    options: [
+      { label: "A", text: "Exotropia", correct: false },
+      { label: "B", text: "Third nerve palsy", correct: false },
+      { label: "C", text: "Sixth nerve palsy", correct: true },
+      { label: "D", text: "Convergence insufficiency", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Inward deviation points towards esotropia Seen in 6th nerve palsy"
+  },
+  {
+    text: "For this patient, diplopia was increasing on looking up and right, which muscle is paralysed among the following?",
+    options: [
+      { label: "A", text: "Lt. Sup. rectus", correct: false },
+      { label: "B", text: "Lt. inf. oblique", correct: false },
+      { label: "C", text: "Rt. sup. rectus", correct: true },
+      { label: "D", text: "Rt. inf rectus", correct: false },
+    ],
+    correct_answer: "C",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (C) Right SR palsy will have right hypotropia, diplopia increasing on looking towards right and up"
+  },
+  {
+    text: "All of the following are true for the given test except ?",
+    options: [
+      { label: "A", text: "The test done is cover un-cover test", correct: false },
+      { label: "B", text: "While doing Hirshberg reflex test, the reflex is seen at center of cornea in both eyes", correct: false },
+      { label: "C", text: "It is a type of comitant squint", correct: false },
+      { label: "D", text: "There is Esophoria described here", correct: true },
+    ],
+    correct_answer: "D",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (D) On uncovering of left eye, it was seen to move intside – means under cover it was going inside- left exophoria (hidden squint)"
+  },
+  {
+    text: "Which component of cover uncover differenciates between comitant and incomitant squints?",
+    options: [
+      { label: "A", text: "Covering of fixating eye", correct: true },
+      { label: "B", text: "Uncovering of fixating eye", correct: false },
+      { label: "C", text: "Covering of deviated eye", correct: false },
+      { label: "D", text: "Uncovering of deviated eye", correct: false },
+    ],
+    correct_answer: "A",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (A) On covering fixated eye, it other eyes remains in same position- its incomitant On covering fixated eye, it other eyes takes up fixation-its comitant"
+  },
+  {
+    text: "Which is correct interpretation of an esophoria patient in which Maddox rod is placed in front of right eye with axis horizontal?",
+    options: [
+      { label: "A", text: "A", correct: false },
+      { label: "B", text: "B", correct: true },
+      { label: "C", text: "C", correct: false },
+      { label: "D", text: "D", correct: false },
+    ],
+    correct_answer: "B",
+    question_images: [],
+    explanation_images: [],
+    explanation: "Correct Answer (B) Maddox rod is placed in front of the right eye. The Maddox rod consists of a series of fused cylindrical red glass rods that convert the appearance of a white spot of light into a red streak. The optical properties of the rods cause the streak of light to be at an angle of 90° with the long axis of the rods; when the glass rods are held horizontally, the streak will be vertical and vice versa. Right eye will see vertical red line Left eye here will see dot Esophoria patient has uncrossed diplopia"
+  },
+];
+
+/* ==========================================
+   QUIZ LOGIC & STATE
+   ========================================== */
+let currentQ = 0;
+let answers = new Array(questions.length).fill(null);
+let marked = new Array(questions.length).fill(false);
+let timerInterval;
+let timeLeft = questions.length * 60; 
+
+function init() {
+    document.getElementById('quiz-metadata').innerText = `${questions.length} Questions | ${questions.length} Marks | ${questions.length} Mins`;
+    buildNavGrid();
+}
+
+document.getElementById('start-test').addEventListener('click', () => {
+    document.getElementById('instructions').classList.add('hidden');
+    document.getElementById('quiz').classList.remove('hidden');
+    loadQuestion(0);
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        let s = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+        
+        if (timeLeft <= 0) {
+            submitTest();
+        }
+    }, 1000);
+});
+
+function loadQuestion(index) {
+    currentQ = index;
+    const q = questions[index];
+    
+    document.getElementById('question-number').innerText = `Question ${index + 1} of ${questions.length}`;
+    document.getElementById('question-text').innerHTML = q.text;
+    
+    const imgContainer = document.getElementById('question-images');
+    imgContainer.innerHTML = '';
+    if(q.question_images && q.question_images.length > 0) {
+        q.question_images.forEach(img => {
+            imgContainer.innerHTML += `<img src="${img}" class="max-w-full md:max-w-xl rounded shadow-md border border-gray-200" alt="Question Image"/>`;
+        });
+    }
+
+    const optsContainer = document.getElementById('options');
+    optsContainer.innerHTML = '';
+    q.options.forEach((opt) => {
+        const isSelected = answers[currentQ] === opt.label ? 'selected' : '';
+        const btnHTML = `
+            <button class="option-btn w-full text-left p-4 rounded-xl mb-3 bg-gray-50 hover:bg-gray-100 text-gray-800 ${isSelected}" 
+                    onclick="selectOption('${opt.label}')">
+                <span class="font-bold mr-2">${opt.label}.</span> ${opt.text}
+            </button>`;
+        optsContainer.insertAdjacentHTML('beforeend', btnHTML);
+    });
+
+    document.getElementById('prev-btn').disabled = index === 0;
+    document.getElementById('next-btn').disabled = index === questions.length - 1;
+    
+    if(index === 0) document.getElementById('prev-btn').classList.add('opacity-50', 'cursor-not-allowed');
+    else document.getElementById('prev-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+    if(index === questions.length - 1) document.getElementById('next-btn').classList.add('opacity-50', 'cursor-not-allowed');
+    else document.getElementById('next-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+
+    const markBtn = document.getElementById('mark-btn');
+    if(marked[currentQ]) {
+        markBtn.classList.replace('bg-yellow-100', 'bg-yellow-400');
+        markBtn.innerText = "Unmark Review";
+    } else {
+        markBtn.classList.replace('bg-yellow-400', 'bg-yellow-100');
+        markBtn.innerText = "Mark for Review";
+    }
+
+    document.getElementById('progress-bar').style.width = `${((index + 1) / questions.length) * 100}%`;
+    buildNavGrid();
+}
+
+window.selectOption = function(label) {
+    answers[currentQ] = label;
+    loadQuestion(currentQ); 
+}
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+    if(currentQ > 0) loadQuestion(currentQ - 1);
+});
+
+document.getElementById('next-btn').addEventListener('click', () => {
+    if(currentQ < questions.length - 1) loadQuestion(currentQ + 1);
+});
+
+document.getElementById('mark-btn').addEventListener('click', () => {
+    marked[currentQ] = !marked[currentQ];
+    loadQuestion(currentQ);
+});
+
+document.getElementById('nav-toggle-btn').addEventListener('click', () => {
+    document.getElementById('nav-panel').classList.remove('hidden');
+});
+
+document.getElementById('close-nav-btn').addEventListener('click', () => {
+    document.getElementById('nav-panel').classList.add('hidden');
+});
+
+document.getElementById('submit-btn').addEventListener('click', () => {
+    if(confirm("Are you sure you want to submit the test?")) {
+        submitTest();
+    }
+});
+
+function buildNavGrid() {
+    const grid = document.getElementById('nav-grid');
+    grid.innerHTML = '';
+    questions.forEach((_, i) => {
+        let cls = answers[i] ? 'answered' : 'unanswered';
+        if (marked[i]) cls += ' marked';
+        if (i === currentQ) cls += ' active';
+        
+        grid.innerHTML += `
+            <button class="grid-btn ${cls}" onclick="jumpToQ(${i})">
+                ${i + 1}
+            </button>`;
+    });
+}
+
+window.jumpToQ = function(idx) {
+    document.getElementById('nav-panel').classList.add('hidden');
+    loadQuestion(idx);
+}
+
+function submitTest() {
+    clearInterval(timerInterval);
+    document.getElementById('quiz').classList.add('hidden');
+    document.getElementById('nav-panel').classList.add('hidden');
+    document.getElementById('results').classList.remove('hidden');
+    
+    confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+
+    let correct = 0, wrong = 0, unans = 0;
+    answers.forEach((ans, i) => {
+        if (!ans) {
+            unans++;
+        } else {
+            const isCorrect = questions[i].options.find(o => o.label === ans)?.correct;
+            if (isCorrect) correct++;
+            else wrong++;
+        }
+    });
+
+    document.getElementById('res-correct').innerText = correct;
+    document.getElementById('res-wrong').innerText = wrong;
+    document.getElementById('res-unanswered').innerText = unans;
+    document.getElementById('res-score').innerText = `${correct} / ${questions.length}`;
+    
+    renderAllResults();
+}
+
+function renderAllResults() {
+    const container = document.getElementById('results-content');
+    let html = '';
+
+    questions.forEach((q, i) => {
+        const userAns = answers[i];
+        const correctOpt = q.options.find(o => o.correct);
+        const isCorrect = userAns === correctOpt.label;
+        
+        let statusBadge = '';
+        if(!userAns) statusBadge = `<span class="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm font-bold ml-3 inline-block">Unanswered</span>`;
+        else if(isCorrect) statusBadge = `<span class="bg-green-100 text-green-700 px-3 py-1 rounded text-sm font-bold ml-3 inline-block">Correct</span>`;
+        else statusBadge = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded text-sm font-bold ml-3 inline-block">Incorrect</span>`;
+
+        html += `
+        <div class="border border-gray-200 p-6 rounded-xl mb-6 bg-white">
+            <h3 class="text-lg font-bold mb-4">
+                Q${i+1}. ${q.text} ${statusBadge}
+            </h3>
+        `;
+        
+        if(q.question_images && q.question_images.length > 0) {
+            q.question_images.forEach(img => {
+                html += `<img src="${img}" class="max-w-full md:max-w-md rounded shadow border border-gray-100 mb-4"/>`;
+            });
+        }
+
+        html += `<div class="mb-4 space-y-2">`;
+        q.options.forEach(opt => {
+            let styling = 'res-normal';
+            if (opt.correct) styling = 'res-correct';
+            else if (userAns === opt.label && !opt.correct) styling = 'res-wrong';
+            
+            html += `<div class="p-3 rounded-lg ${styling}"><span class="font-bold mr-2">${opt.label}.</span> ${opt.text}</div>`;
+        });
+        html += `</div>`;
+
+        html += `
+            <div class="bg-blue-50 p-5 rounded-lg border border-blue-100 mt-4">
+                <h4 class="font-bold text-blue-800 mb-2">Explanation:</h4>
+                <div class="text-gray-700 text-sm leading-relaxed">${q.explanation}</div>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+init();
+</script>
+</body>
+</html>
