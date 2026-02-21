@@ -8,9 +8,9 @@ Quiz Master is a "Bring Your Own Quiz" (BYOQ) web application designed to digiti
 /
 ├── index.html        # Main application entry point
 ├── assets/           # Static assets (PDFs, images)
-├── dev/              # Development artifacts and reference files
+├── examples/         # Example prompts and quiz files
 │   ├── quiz_generation_prompt.txt
-│   └── ...
+├── example_quiz.json # Sample quiz file for testing
 └── README.md         # Project documentation
 ```
 
@@ -28,8 +28,18 @@ Quiz Master is a "Bring Your Own Quiz" (BYOQ) web application designed to digiti
 
 1.  Clone the repository.
 2.  Open `index.html` in a modern web browser.
-3.  Follow the in-app instructions to generate your quiz JSON from a PDF using AI Studio, or use an existing JSON file.
-4.  Upload the JSON configuration and optional PDF file to start a quiz.
+3.  **Generate Quiz JSON:**
+    - Use the system prompt in `examples/quiz_generation_prompt.txt` or copy it from the app's "How to Generate Quiz JSON" modal.
+    - Paste the prompt and your quiz content (text or PDF) into an AI assistant like **ChatGPT**, **Claude**, or **Gemini / AI Studio**.
+    - Copy the generated JSON output.
+4.  **Start Quiz:**
+    - Paste the JSON into the app or upload the `.json` file.
+    - (Optional) Upload the original PDF for reference.
+    - Click "Start Quiz".
+
+## Testing
+
+For a quick test, you can upload the `example_quiz.json` file found in the root directory.
 
 ## Development
 

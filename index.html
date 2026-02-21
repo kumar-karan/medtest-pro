@@ -77,9 +77,6 @@
         <h1 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Quiz Master</h1>
     </div>
     <div class="flex items-center gap-4">
-         <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors hidden sm:block">Documentation</a>
-         <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors hidden sm:block">Support</a>
-        <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
         <button id="setup-theme-toggle-btn" onclick="toggleTheme()" class="flex items-center justify-center size-9 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors" title="Toggle Theme">
             <span id="setup-theme-icon" class="material-symbols-outlined text-[20px]"></span>
         </button>
@@ -151,10 +148,7 @@
                     <span>Start Quiz</span>
                     <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </button>
-                 <p class="text-xs text-center text-slate-400 dark:text-slate-500">
-                    By starting, you agree to the <a class="underline hover:text-primary" href="#">terms of service</a>.
-                </p>
-                <button onclick="toggleInstructions(true)" class="text-sm text-primary hover:underline mt-2">How to Generate Quiz JSON?</button>
+                <button onclick="toggleInstructions(true)" class="text-sm text-primary hover:underline mt-4 text-center w-full">How to Generate Quiz JSON?</button>
             </div>
         </div>
     </div>
@@ -172,14 +166,19 @@
         </header>
         <div class="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar">
             <div class="prose prose-slate dark:prose-invert max-w-none">
-                <p>To generate the required JSON data for this application, you will use Google's AI Studio. Follow these steps:</p>
+                <p>To generate the required JSON data for this application, you can use any advanced AI model. Follow these steps:</p>
                 <ol>
-                    <li>Open <a href="https://aistudio.google.com/prompts/new_chat" target="_blank" class="text-primary hover:underline">Google AI Studio</a> in a new tab.</li>
-                    <li>In AI Studio, create a new "Structured Prompt".</li>
+                    <li>Open your preferred AI assistant:
+                        <ul class="list-disc pl-5 mt-1 mb-2">
+                            <li><a href="https://chatgpt.com/" target="_blank" class="text-primary hover:underline">ChatGPT</a> (OpenAI)</li>
+                            <li><a href="https://claude.ai/" target="_blank" class="text-primary hover:underline">Claude</a> (Anthropic)</li>
+                            <li><a href="https://gemini.google.com/" target="_blank" class="text-primary hover:underline">Gemini</a> / <a href="https://aistudio.google.com/" target="_blank" class="text-primary hover:underline">AI Studio</a> (Google)</li>
+                        </ul>
+                    </li>
                     <li>Copy the complete system prompt provided below.</li>
-                    <li>Paste it into the "System prompt" area in AI Studio.</li>
-                    <li>Drag and drop your PDF quiz file into the prompt area.</li>
-                    <li>Run the prompt. AI Studio will generate the JSON output.</li>
+                    <li>Paste it into the chat.</li>
+                    <li>Upload your PDF quiz file (or paste the text content).</li>
+                    <li>The AI will generate the JSON output.</li>
                     <li>Copy the entire JSON output (starting with <code>[</code> and ending with <code>]</code>).</li>
                     <li>Return to this page and paste the JSON into the text box on the setup screen.</li>
                 </ol>
