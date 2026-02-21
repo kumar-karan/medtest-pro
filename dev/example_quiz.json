@@ -1,0 +1,30 @@
+[
+  {
+    "text": "What is the capital of France?",
+    "options": [
+      { "label": "A", "text": "London", "correct": false },
+      { "label": "B", "text": "Paris", "correct": true },
+      { "label": "C", "text": "Berlin", "correct": false },
+      { "label": "D", "text": "Madrid", "correct": false }
+    ],
+    "correct_answer": "B. Paris",
+    "question_images": [],
+    "explanation_images": [],
+    "explanation": "<p><strong>Correct Answer: B.</strong><br>Paris is the capital of France.</p>",
+    "page_ref": 1
+  },
+  {
+    "text": "Which planet is known as the Red Planet?",
+    "options": [
+      { "label": "A", "text": "Earth", "correct": false },
+      { "label": "B", "text": "Mars", "correct": true },
+      { "label": "C", "text": "Jupiter", "correct": false },
+      { "label": "D", "text": "Venus", "correct": false }
+    ],
+    "correct_answer": "B. Mars",
+    "question_images": [],
+    "explanation_images": [],
+    "explanation": "<p><strong>Correct Answer: B.</strong><br>Mars is known as the Red Planet due to reddish iron oxide prevalent on its surface.</p>",
+    "page_ref": 1
+  }
+]
