@@ -1,0 +1,298 @@
+[
+  {
+    "text": "Which of these is not a part of anterior segment of eyeball?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Cornea",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "Posterior chamber",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "Hyaloid vessel",
+        "correct": true
+      },
+      {
+        "label": "D",
+        "text": "Zonules",
+        "correct": false
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "Cloquet canal contains the <b>hyaloid vessel</b> (primary vitreous) and is located in the posterior segment of the eyeball.",
+    "page_ref": 2,
+    "question_images": []
+  },
+  {
+    "text": "[IMAGE] A child was born at 34 weeks of gestation. Ophthalmologist review was sort to look for any eye abnormalities. There was a white reflex in one eye. On further evaluation, the doctor observed finding as shown in figure. This could be due to abnormality in which embryonic structure?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Mesoderm",
+        "correct": true
+      },
+      {
+        "label": "B",
+        "text": "Neural crest",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "Surface ectoderm",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "Neuro-ectoderm",
+        "correct": false
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The image shows an ultrasound doppler suggestive of <b>persistent hyperplastic primary vitreous (PHPV)</b>. This condition is due to the persistence of the hyaloid vessel, which is a derivative of the <b>mesoderm</b>.",
+    "page_ref": 2,
+    "question_images": [
+      "image_Q2.png"
+    ]
+  },
+  {
+    "text": "Which structure lies in the intraconal space?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Lacrimal gland",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "Optic nerve",
+        "correct": true
+      },
+      {
+        "label": "C",
+        "text": "Levator palpebrae",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "Orbicularis oculi",
+        "correct": false
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "The <b>intraconal space</b> is the area within the cone formed by the extraocular muscles. Its contents include:<br><ul><li>Optic nerve</li><li>Ophthalmic artery</li><li>Cranial nerves III (Oculomotor), VI (Abducens)</li><li>Nasociliary nerve (a branch of CN V1)</li></ul>The lacrimal gland is in the superotemporal orbit, and the levator palpebrae and orbicularis oculi are extraconal.",
+    "page_ref": 3,
+    "question_images": []
+  },
+  {
+    "text": "Parasympathetic fibers for pupillary constriction originate from:",
+    "options": [
+      {
+        "label": "A",
+        "text": "Edinger–Westphal nucleus",
+        "correct": true
+      },
+      {
+        "label": "B",
+        "text": "Superior colliculus",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "Lateral geniculate body",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "Red nucleus",
+        "correct": false
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The parasympathetic pathway for pupillary light reflex originates in the <b>Edinger–Westphal nucleus</b>. The pathway is as follows:<br><b>Afferent:</b> Optic nerve -> Pretectal nucleus<br><b>Efferent:</b> Edinger-Westphal nucleus -> CN III -> Ciliary ganglion -> Short ciliary nerves -> Sphincter pupillae muscle.",
+    "page_ref": 3,
+    "question_images": []
+  },
+  {
+    "text": "In a complete lesion of the right optic nerve, shining light in the right eye will produce:",
+    "options": [
+      {
+        "label": "A",
+        "text": "No constriction in either eye",
+        "correct": true
+      },
+      {
+        "label": "B",
+        "text": "Right pupil constriction only",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "Left pupil constriction only",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "Both pupils constrict",
+        "correct": false
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "A complete lesion of the right optic nerve results in a right <b>afferent pupillary defect (APD)</b>. The optic nerve carries the afferent signal for the light reflex. If it is severed, shining a light in the affected (right) eye will not generate any signal to the brain, so neither pupil will constrict. However, shining a light in the normal (left) eye will cause both pupils to constrict because the efferent pathways (oculomotor nerves) are intact.",
+    "page_ref": 4,
+    "question_images": []
+  },
+  {
+    "text": "A 25 year old female was diagnosed to have left eye optic neuritis due to demyelination. MRI was normal. What will be the pupil reaction when torch light will be swung in left eye during swinging flash light examination?",
+    "options": [
+      {
+        "label": "A",
+        "text": "No reaction in both pupils",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "Dilatation of both pupils",
+        "correct": true
+      },
+      {
+        "label": "C",
+        "text": "No reaction in left, constriction in right",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "No reaction in right, constriction in left",
+        "correct": false
+      }
+    ],
+    "correct_answer": "B",
+    "explanation": "Optic neuritis causes a <b>relative afferent pupillary defect (RAPD)</b>, also known as a Marcus Gunn pupil. During the swinging flashlight test, when light is moved from the normal eye (which causes strong constriction of both pupils) to the affected left eye, the afferent signal is weaker. This reduced signal causes both pupils to dilate, as the constriction stimulus is less than it was from the healthy eye.",
+    "page_ref": 4,
+    "question_images": []
+  },
+  {
+    "text": "During pupil examination of a patient, anisocoria was noted which was more in bright light. Slit lamp examination revealed normal iris pattern and pupil shape. There was no pupil constriction in left eye with diluted pilocarpine. Even there was no constriction was noted after instillation of 1% pilocarpine. What’s the possible diagnosis",
+    "options": [
+      {
+        "label": "A",
+        "text": "Adie pupil",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "3rd nerve palsy",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "Damage to iris sphincter",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "Atropine use",
+        "correct": true
+      }
+    ],
+    "correct_answer": "D",
+    "explanation": "The key finding is the lack of constriction to both diluted (0.125%) and full-strength (1%) pilocarpine. This indicates <b>pharmacologic blockade</b>. Atropine is a muscarinic antagonist that blocks the acetylcholine receptors on the iris sphincter muscle, preventing pilocarpine (a muscarinic agonist) from causing constriction.<br>An <b>Adie pupil</b> would constrict to diluted pilocarpine. A <b>3rd nerve palsy</b> pupil would constrict to 1% pilocarpine.",
+    "page_ref": 4,
+    "question_images": []
+  },
+  {
+    "text": "[IMAGE] The afferent pathway of the reflex needed while doing this testing passes through:",
+    "options": [
+      {
+        "label": "A",
+        "text": "Pretectal nucleus",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "Oculomotor nerve",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "Visual cortex",
+        "correct": true
+      },
+      {
+        "label": "D",
+        "text": "Edinger–Westphal nucleus",
+        "correct": false
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "The image shows testing of the <b>near reflex triad</b> (accommodation, convergence, and miosis). Unlike the pupillary light reflex which is a subcortical brainstem reflex, the near reflex is a cortical reflex. The afferent pathway involves the perception of a near object, which requires processing in the <b>visual cortex</b> (occipital lobe). The pathway is: Retina → Optic nerve → Lateral Geniculate Body (LGB) → Visual cortex.",
+    "page_ref": 5,
+    "question_images": [
+      "image_Q8.png"
+    ]
+  },
+  {
+    "text": "[IMAGE] A child with visual acuity of 6/6 in right eye and 6/60 in other eye with best possible correction. Both eyes had refractive error of +4D. No structural abnormality was there in eyes other than shown in pic. Which chart shown gives accurate visual acuity here?",
+    "options": [
+      {
+        "label": "A",
+        "text": "A",
+        "correct": false
+      },
+      {
+        "label": "B",
+        "text": "B",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "C",
+        "correct": true
+      },
+      {
+        "label": "D",
+        "text": "D",
+        "correct": false
+      }
+    ],
+    "correct_answer": "C",
+    "explanation": "The patient has <b>anisometropic amblyopia</b> in the left eye. In amblyopia, the 'crowding phenomenon' is common, where letters are harder to distinguish when they are close together. The <b>ETDRS chart (C)</b> standardizes the spacing between letters and lines, which can provide a more accurate measurement of visual acuity in amblyopic eyes compared to a standard Snellen chart (A), often revealing slightly better vision.",
+    "page_ref": 5,
+    "question_images": [
+      "image_Q9.png"
+    ]
+  },
+  {
+    "text": "A patient reads 6/18 with right eye. This implies:",
+    "options": [
+      {
+        "label": "A",
+        "text": "Patient can read at 6 m what a normal person reads at 18 m",
+        "correct": true
+      },
+      {
+        "label": "B",
+        "text": "Patient can read at 18 m what a normal person reads at 6 m",
+        "correct": false
+      },
+      {
+        "label": "C",
+        "text": "Minimal angle of resolution is 30 minutes of arc",
+        "correct": false
+      },
+      {
+        "label": "D",
+        "text": "The total minimal angle of resolution subtends is 3 minutes of arc",
+        "correct": false
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Visual acuity notation (e.g., 6/18) is a fraction. The numerator (6) is the testing distance in meters. The denominator (18) is the distance in meters at which a person with normal vision (6/6) could read the same line. Therefore, 6/18 vision means the patient can read at <b>6 meters</b> what a person with normal vision can read from <b>18 meters</b> away.",
+    "page_ref": 6,
+    "question_images": []
+  }
+]
