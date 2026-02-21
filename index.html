@@ -843,6 +843,21 @@ function fitPdf() {
 }
 
 // --- GRID & UTILS ---
+function getGridButtonClass(i) {
+    let cls = 'aspect-square flex items-center justify-center rounded font-medium text-sm transition-colors border ';
+    if (flagged[i]) {
+        cls += 'bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 border-transparent relative';
+    } else if (answers[i]) {
+        cls += 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 border-transparent';
+    } else {
+        cls += 'bg-slate-200 text-slate-600 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-400 border-transparent';
+    }
+    if (i === currentQIndex) {
+        cls += ' ring-2 ring-primary';
+    }
+    return cls;
+}
+
 function toggleGrid() {
     const modal = document.getElementById('grid-modal');
     if(modal.style.display === 'flex') {
@@ -851,21 +866,26 @@ function toggleGrid() {
     }
     
     const content = document.getElementById('grid-content');
-    content.innerHTML = quizData.map((_, i) => {
-        let cls = 'aspect-square flex items-center justify-center rounded font-medium text-sm transition-colors border ';
-        if (flagged[i]) {
-            cls += 'bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 border-transparent relative';
-        } else if (answers[i]) {
-            cls += 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 border-transparent';
-        } else {
-            cls += 'bg-slate-200 text-slate-600 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-400 border-transparent';
+
+    // Check if children exist and match count
+    if (content.children.length === quizData.length) {
+        // Update existing
+        for (let i = 0; i < quizData.length; i++) {
+            const btn = content.children[i];
+            const cls = getGridButtonClass(i);
+
+            // Only update if changed
+            if (btn.className !== cls) {
+                btn.className = cls;
+            }
         }
-        if (i === currentQIndex) {
-            cls += ' ring-2 ring-primary';
-        }
-        
-        return `<button onclick="jumpTo(${i})" class="${cls}">${i+1}</button>`;
-    }).join('');
+    } else {
+        // Initial render
+        content.innerHTML = quizData.map((_, i) => {
+            const cls = getGridButtonClass(i);
+            return `<button onclick="jumpTo(${i})" class="${cls}">${i+1}</button>`;
+        }).join('');
+    }
     modal.style.display = 'flex';
 }
 
