@@ -939,10 +939,14 @@ function makeResizable(panel) {
     const pdfViewer = panel.querySelector('.pdf-viewer');
 
     let isDragging = false;
+    let rafId = null;
+    let lastClientX = 0;
+    let totalWidth = 0;
 
     splitter.addEventListener('mousedown', function(e) {
         e.preventDefault();
         isDragging = true;
+        totalWidth = panel.offsetWidth;
         document.body.style.cursor = 'col-resize';
         mainContent.style.pointerEvents = 'none';
         pdfViewer.style.pointerEvents = 'none';
@@ -951,21 +955,34 @@ function makeResizable(panel) {
         window.addEventListener('mouseup', onMouseUp);
     });
 
-    function onMouseMove(e) {
+    function updateSplitter() {
         if (!isDragging) return;
-        const totalWidth = panel.offsetWidth;
-        const newPdfWidth = totalWidth - e.clientX;
         
+        const newPdfWidth = totalWidth - lastClientX;
         const pdfPercentage = (newPdfWidth / totalWidth) * 100;
 
         if (pdfPercentage > 20 && pdfPercentage < 80) {
             pdfViewer.style.width = `${pdfPercentage}%`;
             mainContent.style.width = `${100 - pdfPercentage}%`;
         }
+        rafId = null;
+    }
+
+    function onMouseMove(e) {
+        if (!isDragging) return;
+        lastClientX = e.clientX;
+
+        if (!rafId) {
+            rafId = requestAnimationFrame(updateSplitter);
+        }
     }
 
     function onMouseUp() {
         isDragging = false;
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
         document.body.style.cursor = 'default';
         mainContent.style.pointerEvents = 'auto';
         pdfViewer.style.pointerEvents = 'auto';
