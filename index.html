@@ -1131,7 +1131,11 @@ function submitTest(force = false) {
     let firstIncorrectElement;
 
     list.innerHTML = quizData.map((q, i) => {
-        const correctLabel = q.correct_answer;
+        // Find the correct option object to get its label
+        const correctOption = q.options.find(opt => opt.correct);
+        // Fallback: If no option is marked correct (bad JSON), try to parse the first char of correct_answer string
+        const correctLabel = correctOption ? (correctOption.label || String.fromCharCode(65 + q.options.indexOf(correctOption))) : (q.correct_answer ? q.correct_answer.trim().charAt(0) : '?');
+
         const isCorrect = answers[i] === correctLabel;
         if(isCorrect) correctCount++;
         else if (!firstIncorrectPage) firstIncorrectPage = q.page_ref;
@@ -1150,8 +1154,8 @@ function submitTest(force = false) {
             </div>
             <p class="text-sm text-slate-700 dark:text-slate-300 mb-3">${q.text}</p>
             <div class="text-xs space-y-1 font-mono">
-                <p>Your Answer: <span class="font-bold ${answers[i] === correctLabel ? '' : 'text-red-500 dark:text-red-400'}">${answers[i] || 'None'}</span></p>
-                <p>Correct Answer: <span class="font-bold text-emerald-600 dark:text-emerald-400">${correctLabel}</span></p>
+                <p>Your Answer: <span class="font-bold ${isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}">${answers[i] || 'None'}</span></p>
+                <p>Correct Answer: <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.correct_answer || correctLabel}</span></p>
             </div>
             ${q.explanation ? `<div class="mt-3 text-xs text-slate-500 dark:text-slate-400 border-t border-border-light dark:border-border-dark pt-2">${q.explanation}</div>` : ''}
         </div>`;
