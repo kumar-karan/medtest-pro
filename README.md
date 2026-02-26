@@ -1,6 +1,6 @@
-# Medtest Pro
+# Quiz Master
 
-Medtest Pro is a web-based medical assessment platform designed to digitize and enhance the experience of taking medical practice exams. It converts static PDF questionnaires into interactive, timed, and graded quizzes.
+Quiz Master is a "Bring Your Own Quiz" (BYOQ) web application designed to digitize and enhance the experience of taking practice exams or quizzes. It converts your own static PDF questionnaires (processed into JSON) into interactive, timed, and graded quizzes.
 
 ## Project Structure
 
@@ -8,17 +8,17 @@ Medtest Pro is a web-based medical assessment platform designed to digitize and 
 /
 ├── index.html        # Main application entry point
 ├── assets/           # Static assets (PDFs, images)
-├── dev/              # Development artifacts and reference files
-│   ├── ai_studio_code.*
-│   ├── inspo.html
-│   └── ...
+├── examples/         # Example prompts and quiz files
+│   ├── quiz_generation_prompt.txt
+├── example_quiz.json # Sample quiz file for testing
 └── README.md         # Project documentation
 ```
 
 ## Features
 
+- **Bring Your Own Quiz:** Upload any quiz in JSON format.
 - **Interactive Testing:** Converts static content into a dynamic quiz interface.
-- **PDF Integration:** View the original PDF alongside the questions for reference.
+- **PDF Integration:** View the original PDF alongside the questions for reference (optional).
 - **Auto-Fit PDF:** Automatically scales the reference PDF to fit the viewer.
 - **Timer & Progress:** Track time remaining and questions completed.
 - **Theme Support:** Toggle between Light and Dark modes.
@@ -28,7 +28,18 @@ Medtest Pro is a web-based medical assessment platform designed to digitize and 
 
 1.  Clone the repository.
 2.  Open `index.html` in a modern web browser.
-3.  Upload the required JSON configuration and PDF file (optional) to start an exam.
+3.  **Generate Quiz JSON:**
+    - Use the system prompt in `examples/quiz_generation_prompt.txt` or copy it from the app's "How to Generate Quiz JSON" modal.
+    - Paste the prompt and your quiz content (text or PDF) into an AI assistant like **ChatGPT**, **Claude**, or **Gemini / AI Studio**.
+    - Copy the generated JSON output.
+4.  **Start Quiz:**
+    - Paste the JSON into the app or upload the `.json` file.
+    - (Optional) Upload the original PDF for reference.
+    - Click "Start Quiz".
+
+## Testing
+
+For a quick test, you can upload the `example_quiz.json` file found in the root directory.
 
 ## Development
 
@@ -38,4 +49,4 @@ Medtest Pro is a web-based medical assessment platform designed to digitize and 
 
 ## Credits
 
-Developed by Karan Kumar.
+Originally developed by Karan Kumar, adapted for general use.

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Medtest Pro</title>
+    <title>Quiz Master</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23137fec'%3E%3Cpath d='M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm0 8.48L4.69 8 12 4.52 19.31 8 12 11.48z'/%3E%3C/svg%3E">
     
     <!-- Libraries -->
@@ -53,6 +53,14 @@
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
         .full-width .pdf-viewer { display: none; }
         .pdf-viewer-visible .pdf-viewer { display: flex; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
     </style>
     <script>
         // Set theme on initial load to prevent flash
@@ -74,91 +82,155 @@
         <div class="size-8 bg-primary/10 rounded flex items-center justify-center text-primary">
             <span class="material-symbols-outlined text-xl">school</span>
         </div>
-        <h1 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Medtest Pro</h1>
+        <h1 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Quiz Master</h1>
     </div>
     <div class="flex items-center gap-4">
-         <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors hidden sm:block">Documentation</a>
-         <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors hidden sm:block">Support</a>
-        <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
         <button id="setup-theme-toggle-btn" onclick="toggleTheme()" class="flex items-center justify-center size-9 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors" title="Toggle Theme">
             <span id="setup-theme-icon" class="material-symbols-outlined text-[20px]"></span>
         </button>
     </div>
 </header>
 
-<!-- SETUP SCREEN -->
-<div id="setup-screen" class="min-h-screen flex flex-col items-center justify-center p-6 w-full max-w-7xl mx-auto pt-20">
-    <div class="w-full max-w-4xl flex flex-col gap-8"> <!-- Removed redundant pt-16 -->
-        <div class="flex flex-col gap-2 text-center">
-            <p class="text-slate-500 dark:text-slate-400 text-lg">Upload your configuration files to generate the test environment.</p>
+<!-- LANDING PAGE -->
+<section id="landing-page" class="min-h-screen flex flex-col items-center justify-center px-6 py-24 text-center">
+    <div class="max-w-4xl mx-auto space-y-8 animate-fade-in-up">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wide uppercase mb-4">
+            <span class="size-2 rounded-full bg-blue-500 animate-pulse"></span>
+            AI Powered Learning
         </div>
+        <h1 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+            Quiz Master <br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">Bring Your Own Quiz</span>
+        </h1>
+        <p class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            Convert any text or PDF into an interactive, timed, and graded quiz in seconds using AI.
+        </p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- JSON Input -->
-            <div class="group relative flex flex-col h-full bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-border-light dark:border-border-dark p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">1. Quiz Structure</h3>
-                    <span class="px-2 py-1 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">Required</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-3xl mx-auto mt-12 mb-12">
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
+                <div class="size-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-4">
+                    <span class="material-symbols-outlined text-2xl">psychology</span>
                 </div>
-                
-                <textarea id="json-paste" oninput="handleJsonPaste()" placeholder="Paste your JSON quiz data here..." class="w-full h-40 bg-slate-50 dark:bg-[#141e28] border-2 border-slate-300 dark:border-slate-600 rounded-lg p-4 focus:border-primary focus:ring-2 focus:ring-primary/20 transition mb-4 font-mono text-sm resize-none"></textarea>
-
-                <div id="json-drop-area" class="flex-1 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 group-hover:border-primary/50 bg-slate-50 dark:bg-[#141e28] py-6 transition-colors cursor-pointer">
-                    <div class="text-center">
-                        <p id="json-status" class="text-slate-900 dark:text-white font-semibold">Or Upload a File</p>
-                        <p class="text-slate-500 dark:text-slate-400 text-sm">Drag & drop or click to browse</p>
-                    </div>
-                </div>
-                
-                <input type="file" id="file-json" accept=".json" class="hidden" onchange="handleJsonUpload(this)">
+                <h3 class="font-bold text-lg mb-2">1. Generate</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Use ChatGPT, Claude, or Gemini to create a quiz JSON from your notes.</p>
             </div>
-
-            <!-- PDF Input -->
-            <div class="group relative flex flex-col h-full bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-border-light dark:border-border-dark p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">2. Reference Material</h3>
-                                             <span class="px-2 py-1 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">Optional</span>                </div>
-                <div id="pdf-drop-area" class="flex-1 flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 group-hover:border-primary/50 bg-slate-50 dark:bg-[#141e28] px-6 py-10 transition-colors cursor-pointer">
-                    <div class="size-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-2">
-                        <span class="material-symbols-outlined text-3xl">picture_as_pdf</span>
-                    </div>
-                    <div class="text-center space-y-1 max-w-full">
-                                <p id="pdf-status" class="text-slate-900 dark:text-white font-semibold truncate">Upload PDF Guide</p>
-                                <p class="text-slate-500 dark:text-slate-400 text-sm">Drag & drop or click to browse</p>
-                            </div>                </div>
-                 <input type="file" id="file-pdf" accept=".pdf" class="hidden" onchange="handlePdfUpload(this)">
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
+                <div class="size-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4">
+                    <span class="material-symbols-outlined text-2xl">upload_file</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2">2. Upload</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Paste the JSON code or upload the file. Add a reference PDF if needed.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
+                <div class="size-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4">
+                    <span class="material-symbols-outlined text-2xl">play_circle</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2">3. Play</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Take the interactive quiz with timer, scoring, and instant feedback.</p>
             </div>
         </div>
 
-        <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg border border-border-light dark:border-border-dark p-6 flex flex-col md:flex-row gap-6 items-center justify-between">
-            <div id="summary-panel" class="flex-1 w-full space-y-2 hidden">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Session Summary</h3>
-                <div class="flex flex-wrap gap-4 pt-2">
-                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
-                        <span class="material-symbols-outlined text-lg">quiz</span>
-                        <span id="summary-questions" class="text-sm font-medium">-- Questions</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1 py-1 rounded-lg">
-                        <span class="material-symbols-outlined text-lg pl-2">timer</span>
-                        <button onclick="adjustTime(-5)" class="size-7 flex items-center justify-center rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 font-mono text-lg">-</button>
-                        <span id="summary-time" class="text-sm font-medium w-24 text-center tabular-nums">-- Minutes</span>
-                        <button onclick="adjustTime(5)" class="size-7 flex items-center justify-center rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 font-mono text-lg">+</button>
-                    </div>
-                </div>
-            </div>
-            <div class="w-full md:w-auto flex flex-col gap-3 min-w-[240px]">
-                <button id="btn-start-app" onclick="startApp()" disabled class="w-full h-12 bg-primary hover:bg-blue-600 active:bg-blue-700 text-white font-bold text-lg rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:shadow-none disabled:cursor-not-allowed">
-                    <span>Start Exam</span>
-                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        <button onclick="goToSetup()" class="px-8 py-4 rounded-xl bg-primary hover:bg-blue-600 text-white font-bold text-xl shadow-lg shadow-blue-500/30 hover:scale-105 transition-all flex items-center gap-2 mx-auto">
+            Create New Quiz
+            <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+    </div>
+</section>
+
+<!-- SETUP SECTION -->
+<section id="setup-section" class="min-h-screen flex flex-col items-center justify-center p-6 w-full max-w-5xl mx-auto pt-24 hidden">
+    <div class="w-full space-y-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <button onclick="goToLanding()" class="text-sm text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 mb-2">
+                    <span class="material-symbols-outlined text-base">arrow_back</span> Back
                 </button>
-                 <p class="text-xs text-center text-slate-400 dark:text-slate-500">
-                    By starting, you agree to the <a class="underline hover:text-primary" href="#">terms of service</a>.
-                </p>
-                <button onclick="toggleInstructions(true)" class="text-sm text-primary hover:underline mt-2">How to Generate Quiz JSON?</button>
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Configure Your Quiz</h2>
+            </div>
+            <button onclick="toggleInstructions(true)" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium text-sm hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
+                <span class="material-symbols-outlined text-lg">help</span>
+                Need Help Generating JSON?
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Inputs -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Step 1: JSON -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="size-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">1</div>
+                        <h3 class="font-bold text-lg">Quiz Data</h3>
+                    </div>
+
+                    <div class="relative">
+                        <textarea id="json-paste" oninput="handleJsonPaste()" placeholder="Paste your generated JSON here..." class="w-full h-48 bg-slate-50 dark:bg-[#0f172a] border border-slate-300 dark:border-slate-600 rounded-xl p-4 focus:border-primary focus:ring-2 focus:ring-primary/20 transition font-mono text-sm resize-none"></textarea>
+                        <div id="json-drop-area" class="mt-3 flex items-center justify-center p-6 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl hover:border-primary/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer" onclick="document.getElementById('file-json').click()">
+                            <div class="text-center">
+                                <p id="json-status" class="font-medium text-slate-700 dark:text-slate-300">Or click to upload .json file</p>
+                            </div>
+                        </div>
+                        <input type="file" id="file-json" accept=".json" class="hidden" onchange="handleJsonUpload(this)">
+                    </div>
+                </div>
+
+                <!-- Step 2: PDF -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">2</div>
+                            <h3 class="font-bold text-lg">Reference Document</h3>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-500">OPTIONAL</span>
+                    </div>
+
+                    <div id="pdf-drop-area" class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl hover:border-primary/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer" onclick="document.getElementById('file-pdf').click()">
+                        <div class="size-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-3">
+                            <span class="material-symbols-outlined text-2xl">picture_as_pdf</span>
+                        </div>
+                        <p id="pdf-status" class="font-medium text-slate-700 dark:text-slate-300">Upload PDF Reference</p>
+                        <p class="text-xs text-slate-500 mt-1">Visible alongside questions</p>
+                    </div>
+                    <input type="file" id="file-pdf" accept=".pdf" class="hidden" onchange="handlePdfUpload(this)">
+                </div>
+            </div>
+
+            <!-- Right Column: Summary & Actions -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-24 space-y-6">
+                    <div id="summary-panel" class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 hidden">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Quiz Summary</h3>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
+                                <span class="text-slate-600 dark:text-slate-400">Total Questions</span>
+                                <span id="summary-questions" class="font-bold text-xl">--</span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <span class="text-slate-600 dark:text-slate-400 block">Duration</span>
+                                <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 rounded-lg p-1">
+                                    <button onclick="adjustTime(-5)" class="size-8 flex items-center justify-center rounded bg-white dark:bg-slate-800 shadow-sm hover:scale-105 transition">-</button>
+                                    <span id="summary-time" class="flex-1 text-center font-mono font-medium">-- Mins</span>
+                                    <button onclick="adjustTime(5)" class="size-8 flex items-center justify-center rounded bg-white dark:bg-slate-800 shadow-sm hover:scale-105 transition">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-start-app" onclick="startApp()" disabled class="w-full py-4 rounded-xl bg-primary hover:bg-blue-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-lg shadow-lg shadow-blue-500/20 disabled:shadow-none transition-all flex items-center justify-center gap-2">
+                        Start Quiz
+                        <span class="material-symbols-outlined">play_arrow</span>
+                    </button>
+
+                    <p class="text-xs text-center text-slate-400 px-4">
+                        Ensure your JSON follows the required format before starting.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 
 <!-- INSTRUCTIONS MODAL -->
@@ -172,14 +244,19 @@
         </header>
         <div class="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar">
             <div class="prose prose-slate dark:prose-invert max-w-none">
-                <p>To generate the required JSON data for this application, you will use Google's AI Studio. Follow these steps:</p>
+                <p>To generate the required JSON data for this application, you can use any advanced AI model. Follow these steps:</p>
                 <ol>
-                    <li>Open <a href="https://aistudio.google.com/prompts/new_chat" target="_blank" class="text-primary hover:underline">Google AI Studio</a> in a new tab.</li>
-                    <li>In AI Studio, create a new "Structured Prompt".</li>
+                    <li>Open your preferred AI assistant:
+                        <ul class="list-disc pl-5 mt-1 mb-2">
+                            <li><a href="https://chatgpt.com/" target="_blank" class="text-primary hover:underline">ChatGPT</a> (OpenAI)</li>
+                            <li><a href="https://claude.ai/" target="_blank" class="text-primary hover:underline">Claude</a> (Anthropic)</li>
+                            <li><a href="https://gemini.google.com/" target="_blank" class="text-primary hover:underline">Gemini</a> / <a href="https://aistudio.google.com/" target="_blank" class="text-primary hover:underline">AI Studio</a> (Google)</li>
+                        </ul>
+                    </li>
                     <li>Copy the complete system prompt provided below.</li>
-                    <li>Paste it into the "System prompt" area in AI Studio.</li>
-                    <li>Drag and drop your PDF quiz file into the prompt area.</li>
-                    <li>Run the prompt. AI Studio will generate the JSON output.</li>
+                    <li>Paste it into the chat.</li>
+                    <li>Upload your PDF quiz file (or paste the text content).</li>
+                    <li>The AI will generate the JSON output.</li>
                     <li>Copy the entire JSON output (starting with <code>[</code> and ending with <code>]</code>).</li>
                     <li>Return to this page and paste the JSON into the text box on the setup screen.</li>
                 </ol>
@@ -209,7 +286,7 @@
                 <span class="material-symbols-outlined">school</span>
             </div>
             <div>
-                <h1 class="text-base lg:text-lg font-bold leading-tight">Medtest Pro</h1>
+                <h1 class="text-base lg:text-lg font-bold leading-tight">Quiz Master</h1>
                 <p id="progress-text" class="text-xs text-slate-500 dark:text-slate-400">Question 1 of --</p>
             </div>
         </div>
@@ -237,20 +314,20 @@
     </header>
 
     <!-- Main Content Area -->
-    <main id="main-content-area" class="flex flex-1 overflow-hidden relative">
+    <main id="main-content-area" class="flex flex-1 overflow-hidden relative h-[calc(100vh-4rem)]">
         <div class="flex-1 flex flex-col h-full overflow-hidden relative z-10 transition-all duration-300 ease-in-out">
-            <div class="h-1 w-full bg-slate-200 dark:bg-slate-800">
+            <div class="h-1 w-full bg-slate-200 dark:bg-slate-800 flex-none">
                 <div id="progress-bar" class="h-full bg-primary rounded-r transition-all duration-500" style="width: 0%"></div>
             </div>
-            <div id="quiz-content" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-10 pb-24">
+            <div id="quiz-content" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-10">
                 <!-- Dynamic Content -->
             </div>
-            <footer class="flex-none bg-surface-light dark:bg-slate-900 border-t border-border-light dark:border-border-dark p-4 lg:px-8 flex flex-wrap justify-between items-center gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+            <footer class="flex-none bg-surface-light dark:bg-slate-900 border-t border-border-light dark:border-border-dark p-4 lg:px-8 flex flex-wrap justify-between items-center gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 w-full">
                 <button onclick="nav(-1)" class="flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span> <span class="hidden xs:inline">Previous</span><span class="xs:hidden">Prev</span>
                 </button>
                 <button onclick="submitTest()" class="flex items-center gap-2 px-6 py-2 sm:px-8 sm:py-3 rounded-lg bg-primary hover:bg-blue-600 text-white font-bold text-sm shadow-lg shadow-blue-500/20 transition-all">
-                    Submit <span class="hidden sm:inline">Exam</span>
+                    Submit <span class="hidden sm:inline">Quiz</span>
                 </button>
                 <button onclick="nav(1)" class="flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50">
                     <span class="hidden xs:inline">Next</span><span class="xs:hidden">Next</span> <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -341,7 +418,8 @@ let isPdfVisible = false;
 let quizDurationInMinutes = 0;
 let isInitialPdfRender = true;
 
-const setupScreen = document.getElementById('setup-screen');
+const landingPage = document.getElementById('landing-page');
+const setupSection = document.getElementById('setup-section');
 const appInterface = document.getElementById('app-interface');
 const jsonDropArea = document.getElementById('json-drop-area');
 const pdfDropArea = document.getElementById('pdf-drop-area');
@@ -351,7 +429,7 @@ const pdfFileInput = document.getElementById('file-pdf');
 const instructionsModal = document.getElementById('instructions-modal');
 const systemPromptContent = document.getElementById('system-prompt-content');
 
-const systemPromptText = `You are an autonomous Medical Assessment Digitization Engine. Your purpose is to convert PDF documents containing medical questions, images, and answer keys into a strictly formatted, error-free JSON dataset for a web application.
+const systemPromptText = `You are an autonomous Quiz Digitization Engine. Your purpose is to convert PDF documents containing questions, images, and answer keys into a strictly formatted, error-free JSON dataset for a web application.
 
 Your final output should be a single, complete JSON array. Avoid any conversational text, headers, or explanations outside of the JSON structure itself. The output should begin with \`[\` and end with \`]\`.
 
@@ -359,19 +437,19 @@ Your final output should be a single, complete JSON array. Avoid any conversatio
 You will execute the following logic sequentially:
 1.  **Full Scan:** Read the entire document from start to finish. Identify the structure: usually Questions first, followed by a separate "Solutions" or "Explanations" section at the end.
 2.  **Mapping:** Logically link every Question Number (e.g., Q1, Q2) with its corresponding Option list, Correct Answer, and Detailed Explanation from the answer key section.
-3.  **Image Detection:** Visually scan the area immediately surrounding a question. If a medical image (X-ray, CT, histology slide, diagram) is present, assign a placeholder filename.
-4.  **Sanitization:** Strip page numbers, headers (e.g., "NEET PG 2026"), and watermarks. Fix obvious OCR typos in medical terminology.
+3.  **Image Detection:** Visually scan the area immediately surrounding a question. If an image (diagram, chart, photo) is present, assign a placeholder filename.
+4.  **Sanitization:** Strip page numbers, headers, and watermarks. Fix obvious OCR typos.
 5.  **JSON Construction:** Apply specific formatting rules to the extracted data.
 
 ### 2. DATA SCHEMA RULES
 You must construct an array of objects. Each object must strictly adhere to this schema:
 
 - \`text\`: (String) The question stem. Preserve line breaks if necessary using \`<br>\`.
-- \`options\`: (Array of Objects) Exactly 4 options.
-    - \`label\`: "A", "B", "C", "D".
+- \`options\`: (Array of Objects) Exactly 4 options (or as many as present).
+    - \`label\`: "A", "B", "C", "D", etc.
     - \`text\`: The content of the option.
     - \`correct\`: (Boolean) \`true\` if this is the correct answer, \`false\` otherwise.
-- \`correct_answer\`: (String) The option label and text (e.g., "B. Middle cerebral artery").
+- \`correct_answer\`: (String) The option label and text (e.g., "B. Paris").
 - \`explanation\`: (String) The detailed explanation from the PDF.
     - **CRITICAL:** You must format this string as HTML.
     - Use \`<strong>\` for key concepts.
@@ -386,7 +464,7 @@ You must construct an array of objects. Each object must strictly adhere to this
 - \`explanation_images\`: (Array of Strings) Same logic as above, but for images found inside the explanation section.
 
 ### 3. EDGE CASE HANDLING
-- **Missing Explanation:** If the PDF only gives the answer key (e.g., "1. B") without text, generate a concise medical explanation based on your internal knowledge to justify the answer.
+- **Missing Explanation:** If the PDF only gives the answer key (e.g., "1. B") without text, generate a concise explanation based on your internal knowledge to justify the answer.
 - **Image-Based Options:** If the options are images (e.g., "Option A is Image A"), set the option text to "(See Image A)" and ensure \`image_Q{n}.png\` is included in the \`question_images\` array.
 - **Combined Questions:** If a single image serves Q4 and Q5, include the same image placeholder \`["image_Q4_Q5.png"]\` for both JSON entries.
 - **Quote Escaping:** If the text contains double quotes ("), you MUST escape them (e.g., \`\\"patient stated...\\"\`) to prevent breaking the JSON syntax.
@@ -396,18 +474,18 @@ Your output must look EXACTLY like this structure:
 
 [
   {
-    "text": "A 55-year-old patient with long-standing diabetes complains of painful, red eye...",
+    "text": "What is the capital city of France?",
     "options": [
-      { "label": "A", "text": "Its seen in advanced diabetic retinopathy stage", "correct": false },
-      { "label": "B", "text": "Pupil block mechanism causing high IOP", "correct": true },
-      { "label": "C", "text": "This sign suggests extensive retinal ischemia", "correct": false },
-      { "label": "D", "text": "IOP control with Pan retinal photocoagulation to be done here", "correct": false }
+      { "label": "A", "text": "London", "correct": false },
+      { "label": "B", "text": "Paris", "correct": true },
+      { "label": "C", "text": "Berlin", "correct": false },
+      { "label": "D", "text": "Madrid", "correct": false }
     ],
-    "correct_answer": "B. Pupil block mechanism causing high IOP",
-    "question_images": ["image_Q43.png"],
+    "correct_answer": "B. Paris",
+    "question_images": [],
     "explanation_images": [],
-    "explanation": "<p><strong>Correct Answer: B.</strong><br>The image shows Rubeosis iridis in Proliferative diabetic retinopathy. The neovascular membrane obstructs the trabecular meshwork, causing high IOP. This is not a pupil block mechanism.</p>",
-    "page_ref": 84
+    "explanation": "<p><strong>Correct Answer: B.</strong><br>Paris is the capital and most populous city of France.</p>",
+    "page_ref": 5
   }
 ]
 
@@ -570,12 +648,23 @@ function saveProgress() {
         timestamp: Date.now()
     };
     try {
-        localStorage.setItem('medtest_save', JSON.stringify(data));
+        localStorage.setItem('quiz_master_save', JSON.stringify(data));
     } catch(e) { console.warn('Autosave failed', e); }
 }
 
+function goToSetup() {
+    landingPage.style.display = 'none';
+    setupSection.style.display = 'flex';
+    window.scrollTo(0,0);
+}
+
+function goToLanding() {
+    setupSection.style.display = 'none';
+    landingPage.style.display = 'flex';
+}
+
 function startApp() {
-    setupScreen.style.display = 'none';
+    setupSection.style.display = 'none';
     document.getElementById('landing-header').style.display = 'none'; // Hide landing header
     appInterface.style.display = 'block'; // Changed to block to respect flex container
     
@@ -602,7 +691,7 @@ function startApp() {
 
     // Check for saved session
     try {
-        const saved = localStorage.getItem('medtest_save');
+        const saved = localStorage.getItem('quiz_master_save');
         if (saved) {
             const data = JSON.parse(saved);
             // Simple validation: same number of questions
@@ -613,7 +702,7 @@ function startApp() {
                     timeLeft = data.timeLeft;
                     currentQIndex = data.currentQIndex;
                 } else {
-                    localStorage.removeItem('medtest_save');
+                    localStorage.removeItem('quiz_master_save');
                 }
             }
         }
@@ -988,8 +1077,8 @@ function handleKeyDown(e) {
         }
         return;
     }
-     // Don't interfere with setup
-    if (setupScreen.style.display !== 'none') return;
+    // Don't interfere with landing or setup
+    if (appInterface.style.display === 'none') return;
 
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
@@ -1017,7 +1106,7 @@ function submitTest(force = false) {
         if (!confirm("Are you sure you want to submit the exam?")) return;
     }
     clearInterval(timerInterval);
-    localStorage.removeItem('medtest_save'); // Clear save
+    localStorage.removeItem('quiz_master_save'); // Clear save
     const modal = document.getElementById('results-modal');
     const list = document.getElementById('results-list');
     const resultsPdfPanel = modal.querySelector('.results-pdf-panel');
@@ -1042,7 +1131,11 @@ function submitTest(force = false) {
     let firstIncorrectElement;
 
     list.innerHTML = quizData.map((q, i) => {
-        const correctLabel = q.correct_answer;
+        // Find the correct option object to get its label
+        const correctOption = q.options.find(opt => opt.correct);
+        // Fallback: If no option is marked correct (bad JSON), try to parse the first char of correct_answer string
+        const correctLabel = correctOption ? (correctOption.label || String.fromCharCode(65 + q.options.indexOf(correctOption))) : (q.correct_answer ? q.correct_answer.trim().charAt(0) : '?');
+
         const isCorrect = answers[i] === correctLabel;
         if(isCorrect) correctCount++;
         else if (!firstIncorrectPage) firstIncorrectPage = q.page_ref;
@@ -1061,8 +1154,8 @@ function submitTest(force = false) {
             </div>
             <p class="text-sm text-slate-700 dark:text-slate-300 mb-3">${q.text}</p>
             <div class="text-xs space-y-1 font-mono">
-                <p>Your Answer: <span class="font-bold ${answers[i] === correctLabel ? '' : 'text-red-500 dark:text-red-400'}">${answers[i] || 'None'}</span></p>
-                <p>Correct Answer: <span class="font-bold text-emerald-600 dark:text-emerald-400">${correctLabel}</span></p>
+                <p>Your Answer: <span class="font-bold ${isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}">${answers[i] || 'None'}</span></p>
+                <p>Correct Answer: <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.correct_answer || correctLabel}</span></p>
             </div>
             ${q.explanation ? `<div class="mt-3 text-xs text-slate-500 dark:text-slate-400 border-t border-border-light dark:border-border-dark pt-2">${q.explanation}</div>` : ''}
         </div>`;
